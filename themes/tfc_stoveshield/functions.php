@@ -483,3 +483,5 @@ add_shortcode( 'product_model_number', 'product_model_number_shortcode' );
          echo '<p>Brand Name: ' . $brand_name . '</p>';
      }
  }
+
+
