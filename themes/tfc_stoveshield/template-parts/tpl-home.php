@@ -2,7 +2,25 @@
 /* Template Name: Home page 
 */
 
-get_header();
+//get_header();
+// $popular_brands = get_field('popular_brands', 'option');
+// if ($popular_brands):
+//    echo  $title = $popular_brands['title'];
+//     if (!empty($popular_brands['brands'])) :
+//         foreach ($popular_brands['brands'] as $brand) :
+//            echo "<pre>";
+//            print_r($brand);
+//         endforeach;
+//     endif;
+//   endif;
+$gift_section = get_field('gift_section', 'option');
+if ($gift_section) :
+     $title = ($gift_section['title']) ? $gift_section['title'] : '';
+     $description = ($gift_section['description']) ? $gift_section['description'] : '';
+     $button_text = ($gift_section['button_text']) ? $gift_section['button_text'] : '';
+     $button_link = ($gift_section['button_link']) ? $gift_section['button_link'] : '';
+endif;
+die('test');
 ?>
 <main>
     <!---------- Section-1 Home Page -------------------->
@@ -14,7 +32,7 @@ get_header();
     $banner_sub_title = ($banner_section['sub_title']) ? $banner_section['sub_title'] : '';
     $banner_button_link = ($banner_section['button_link']) ? $banner_section['button_link'] : '';
     ?>
-    <section class="hero_section" style="background-image: url('<?php echo esc_url($banner_image)?>');">
+    <section class="hero_section" style="background-image: url('<?php echo esc_url($banner_image) ?>');">
         <div class="wrapper flex_column">
             <span><?php echo $banner_sub_title; ?></span>
             <h1><?php echo $banner_title ?></h1>

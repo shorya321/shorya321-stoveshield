@@ -180,3 +180,138 @@ function tfc_stoveshield_widgetss_init(){
     ) );
 }
 add_action( 'widgets_init', 'tfc_stoveshield_widgetss_init');
+
+
+
+/**
+ * Custom shortcode function to retrieve blog posts
+ *
+ * @param array $atts Shortcode attributes.
+ */
+
+
+ function tfc_blog_posts_function($atts) {
+  
+    $atts = shortcode_atts(array(
+        'post_type' => 'post',
+        'posts_per_page' => -1,
+        'categories' => '',
+        'order' => 'DESC',
+        'orderby' => 'date',
+    ), $atts);
+
+  
+    $args = array(
+        'post_type' => $atts['post_type'],
+        'posts_per_page' => $atts['posts_per_page'],
+        'order' => $atts['order'],
+        'orderby' => $atts['orderby'],
+    );
+
+
+   // add the category filter if provided
+    if (!empty($atts['categories'])) {
+        $category_ids = array_map('trim', explode(',', $atts['categories']));
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'category',
+                'field' => 'term_id',
+                'terms' => $category_ids,
+            ),
+        );
+    }
+
+    $query = new WP_Query($args);
+
+    if ($query->have_posts()) {
+        $output = '<div class="tfc-blog-post">';
+
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            $output .= '<div class="post-item">';
+            $output .= '<h3>' . get_the_title() . '</h3>';
+            $output .= '<p>' . get_the_content() . '</p>';
+            $output .= '<p>Author: ' . get_the_author() . '</p>';
+            $output .= '<p>Date: ' . get_the_date() . '</p>';
+            $output .= '</div>';
+        }
+
+        $output .= '</div>';
+
+        wp_reset_postdata();
+
+        return $output;
+    } else {
+        return 'No posts found with the specified attribute.';
+    }
+}
+
+add_shortcode('tfc_blog_posts', 'tfc_blog_posts_function');
+
+
+
+
+/**
+ * WooCommerce Products Shortcode
+ */
+
+ add_shortcode( 'tfc_display_woocommerce_products', 'tfc_display_woocommerce_products_shortcode' );
+
+ function tfc_display_woocommerce_products_shortcode($atts) {
+     ob_start();
+ 
+     // Check if WooCommerce is active
+     if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+        $atts = shortcode_atts( array(
+            'post_type'      => 'product',
+            'category'       => '',
+            'posts_per_page' => 4,
+        ), $atts );
+
+        tfc_display_woocommerce_products( $atts['post_type'], $atts['category'], $atts['posts_per_page'] );
+
+     }
+ 
+     $output = ob_get_clean();
+     return $output;
+ }
+ 
+ function tfc_display_woocommerce_products($post_type, $category, $posts_per_page) {
+     $args = array(
+         'post_type'      => $post_type,
+         'posts_per_page' => $posts_per_page,
+         'orderby'        => 'date',
+         'order'          => 'DESC',
+     );
+
+     if ( ! empty( $category ) ) {
+        $args['product_cat'] = $category;
+    }
+
+     $products = new WP_Query( $args );
+ 
+     // Display the products
+     if ( $products->have_posts() ) {
+         echo '<div class="woocommerce-products">';
+         while ( $products->have_posts() ) {
+             $products->the_post();
+             $product = wc_get_product( get_the_ID() );
+             ?>
+             <div class="product">
+                 <a href="<?php the_permalink(); ?>">
+                     <?php the_post_thumbnail(); ?>
+                     <h3><?php the_title(); ?></h3>
+                     <div class="product-description"><?php echo wp_trim_words( get_the_content(), 20, '...' ); ?></div>
+                     <p class="price"><?php echo $product->get_price_html(); ?></p>
+                 </a>
+                 <div class="add-to-cart">
+                     <?php woocommerce_template_loop_add_to_cart(); ?>
+                 </div>
+             </div>
+             <?php
+         }
+         echo '</div>';
+         wp_reset_postdata();
+     }
+ }
