@@ -113,10 +113,26 @@ add_action('after_setup_theme', 'tfc_stoveshield_setup');
 function  tfc_stoveshield_scripts()
 {
     wp_enqueue_style('style.css', get_stylesheet_uri(), array());
-    wp_enqueue_script('global-js', get_stylesheet_directory_uri() . '/assets/js/global.js');
+    wp_enqueue_script('global-js', get_stylesheet_directory_uri() . '/assets/js/global.js', ['jquery'], '1.0', true);
+
     // Home Page Css
     if (is_page('home')) {
         wp_enqueue_style('home-css', get_stylesheet_directory_uri() . '/assets/css/index.css', array(), microtime());
+    }
+
+    // FAQ Page Css
+    if (is_page('faq')) {
+        wp_enqueue_style('faq-css', get_stylesheet_directory_uri() . '/assets/css/faq.css', array(), microtime());
+    }
+
+    // Contact Page Css
+    if (is_page('contact-us')) {
+        wp_enqueue_style('contact-css', get_stylesheet_directory_uri() . '/assets/css/contact.css', array(), microtime());
+    }
+
+    // Our Story Page Css
+    if (is_page('our-story')) {
+        wp_enqueue_style('ourstory-css', get_stylesheet_directory_uri() . '/assets/css/ourstory.css', array(), microtime());
     }
 }
 add_action('wp_enqueue_scripts', 'tfc_stoveshield_scripts');
@@ -157,41 +173,48 @@ register_nav_menus(
 
 /**
  * Add Custom Sidebars
-*/
-function tfc_stoveshield_widgetss_init(){
-
-    register_sidebar( array(
-        'name'          => __( 'Footer First ', 'textdomain' ),
+ */
+function tfc_stoveshield_widgetss_init()
+{
+    register_sidebar(array(
+        'name'          => __('Footer First ', 'textdomain'),
         'id'            => 'footer_sidebar_1',
-        'description'   => __( 'Widgets in this area will be shown on all posts and pages.', 'textdomain' ),
+        'description'   => __('Widgets in this area will be shown on all posts and pages.', 'textdomain'),
         'before_widget' => '<li id="%1$s" class="widget %2$s flex_column">',
         'after_widget'  => '</li>',
         'before_title'  => '<h3 class="widgettitle">',
         'after_title'   => '</h3>',
-    ) );
-	register_sidebar( array(
-        'name'          => __( 'Footer Second', 'textdomain' ),
+    ));
+    register_sidebar(array(
+        'name'          => __('Footer Second', 'textdomain'),
         'id'            => 'footer_sidebar_2',
-        'description'   => __( 'Widgets in this area will be shown on all posts and pages.', 'textdomain' ),
+        'description'   => __('Widgets in this area will be shown on all posts and pages.', 'textdomain'),
         'before_widget' => '<li id="%1$s" class="widget flex_column %2$s">',
         'after_widget'  => '</li>',
         'before_title'  => '<h3 class="widgettitle">',
         'after_title'   => '</h3>',
-    ) );
+    ));
+    register_sidebar(array(
+        'name'          => __('Header Sidebar ', 'textdomain'),
+        'id'            => 'header_sidebar_1',
+        'description'   => __('Widgets in this area will be shown on all posts and pages.', 'textdomain'),
+        'before_widget' => '<li id="%1$s" class="widget %2$s flex_column">',
+        'after_widget'  => '</li>',
+        'before_title'  => '<h3 class="widgettitle">',
+        'after_title'   => '</h3>',
+    ));
 }
-add_action( 'widgets_init', 'tfc_stoveshield_widgetss_init');
-
+add_action('widgets_init', 'tfc_stoveshield_widgetss_init');
 
 
 /**
  * Custom shortcode function to retrieve blog posts
  *
- * @param array $atts Shortcode attributes.
+ * @param array $atts Shortcode.
  */
+function tfc_blog_posts_function($atts)
+{
 
-
- function tfc_blog_posts_function($atts) {
-  
     $atts = shortcode_atts(array(
         'post_type' => 'post',
         'posts_per_page' => -1,
@@ -200,7 +223,7 @@ add_action( 'widgets_init', 'tfc_stoveshield_widgetss_init');
         'orderby' => 'date',
     ), $atts);
 
-  
+
     $args = array(
         'post_type' => $atts['post_type'],
         'posts_per_page' => $atts['posts_per_page'],
@@ -209,7 +232,7 @@ add_action( 'widgets_init', 'tfc_stoveshield_widgetss_init');
     );
 
 
-   // add the category filter if provided
+    // add the category filter if provided
     if (!empty($atts['categories'])) {
         $category_ids = array_map('trim', explode(',', $atts['categories']));
         $args['tax_query'] = array(
@@ -224,17 +247,30 @@ add_action( 'widgets_init', 'tfc_stoveshield_widgetss_init');
     $query = new WP_Query($args);
 
     if ($query->have_posts()) {
-        $output = '<div class="tfc-blog-post">';
+        $output = '<div class="column flex_row">';
 
         while ($query->have_posts()) {
             $query->the_post();
 
-            $output .= '<div class="post-item">';
-            $output .= '<h3>' . get_the_title() . '</h3>';
-            $output .= '<p>' . get_the_content() . '</p>';
-            $output .= '<p>Author: ' . get_the_author() . '</p>';
-            $output .= '<p>Date: ' . get_the_date() . '</p>';
+            $output .= '<div class="post_archive_loop flex_column">';
+            $output .= '<div class="column featured_image">
+                        <a href="' . get_permalink() . '"><img src="' . get_the_post_thumbnail_url() . '" alt=""></a>
+                        </div>';
+            $output .= '<div class="column post_short_meta_desp flex_column">';
+            $output .= '<h3> ' . get_the_title() . ' </h3>';
+            $output .= '<div class="post_date">';
+            $output .= '<img src=" '.get_site_url().'/wp-content/uploads/2024/04/calendar-alt.svg" alt="calendar-alt" style="max-width: fit-content; width:25; height:25;"/>';
+            $output .= '<span>' . get_the_date() . '</span>';
+
             $output .= '</div>';
+            $output .= '<p>' . get_the_excerpt() . '</p>';
+            $output .= '<a class="global_btn" href="' . get_the_permalink() . '">';
+            $output .= '<div class="btn_wrapper">';
+            $output .= '<span>Read More</span>';
+            $output .= '<svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.58398 11.5H17.4173M17.4173 11.5L11.9173 6M17.4173 11.5L11.9173 17" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>';
+            $output .= '</div></a></div></div>';
         }
 
         $output .= '</div>';
@@ -243,75 +279,87 @@ add_action( 'widgets_init', 'tfc_stoveshield_widgetss_init');
 
         return $output;
     } else {
-        return 'No posts found with the specified attribute.';
+        return 'No posts found';
     }
 }
 
 add_shortcode('tfc_blog_posts', 'tfc_blog_posts_function');
 
 
-
-
 /**
  * WooCommerce Products Shortcode
  */
+add_shortcode('tfc_display_woocommerce_products', 'tfc_display_woocommerce_products_shortcode');
 
- add_shortcode( 'tfc_display_woocommerce_products', 'tfc_display_woocommerce_products_shortcode' );
+function tfc_display_woocommerce_products_shortcode($atts)
+{
+    ob_start();
 
- function tfc_display_woocommerce_products_shortcode($atts) {
-     ob_start();
- 
-     // Check if WooCommerce is active
-     if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-        $atts = shortcode_atts( array(
+    // Check if WooCommerce is active
+    if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+        $atts = shortcode_atts(array(
             'post_type'      => 'product',
             'category'       => '',
             'posts_per_page' => 4,
-        ), $atts );
+        ), $atts);
 
-        tfc_display_woocommerce_products( $atts['post_type'], $atts['category'], $atts['posts_per_page'] );
+        tfc_display_woocommerce_products($atts['post_type'], $atts['category'], $atts['posts_per_page']);
+    }
 
-     }
- 
-     $output = ob_get_clean();
-     return $output;
- }
- 
- function tfc_display_woocommerce_products($post_type, $category, $posts_per_page) {
-     $args = array(
-         'post_type'      => $post_type,
-         'posts_per_page' => $posts_per_page,
-         'orderby'        => 'date',
-         'order'          => 'DESC',
-     );
+    $output = ob_get_clean();
+    return $output;
+}
 
-     if ( ! empty( $category ) ) {
+function tfc_display_woocommerce_products($post_type, $category, $posts_per_page)
+{
+    $args = array(
+        'post_type'      => $post_type,
+        'posts_per_page' => $posts_per_page,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    );
+
+    if (!empty($category)) {
         $args['product_cat'] = $category;
     }
 
-     $products = new WP_Query( $args );
- 
-     // Display the products
-     if ( $products->have_posts() ) {
-         echo '<div class="woocommerce-products">';
-         while ( $products->have_posts() ) {
-             $products->the_post();
-             $product = wc_get_product( get_the_ID() );
-             ?>
-             <div class="product">
-                 <a href="<?php the_permalink(); ?>">
-                     <?php the_post_thumbnail(); ?>
-                     <h3><?php the_title(); ?></h3>
-                     <div class="product-description"><?php echo wp_trim_words( get_the_content(), 20, '...' ); ?></div>
-                     <p class="price"><?php echo $product->get_price_html(); ?></p>
-                 </a>
-                 <div class="add-to-cart">
-                     <?php woocommerce_template_loop_add_to_cart(); ?>
-                 </div>
-             </div>
-             <?php
-         }
-         echo '</div>';
-         wp_reset_postdata();
-     }
- }
+    $products = new WP_Query($args);
+
+    // Display the products
+    if ($products->have_posts()) {
+        while ($products->have_posts()) {
+            $products->the_post();
+            $product = wc_get_product(get_the_ID());
+?>
+            <div class="product_loop product_wrapper flex_column">
+                <div class="column product_meta flex_column">
+                    <div class="inner_column brand_name global_product_meta_card">
+                        <span>Brand Name</span>
+                        <strong>GE</strong>
+                    </div>
+                    <div class="inner_column model_no global_product_meta_card">
+                        <span>Model Number. -</span>
+                        <strong>PGP943SET5SS</strong></p>
+                    </div>
+                </div>
+                <div class="column product_image">
+                    <a href="<?php echo get_permalink(); ?>">
+                        <?php echo woocommerce_get_product_thumbnail(); ?>
+                    </a>
+                </div>
+                <div class="column product_details flex_column">
+                    <h3 class="tfc-product-title">
+                        <a href="<?php echo get_permalink(); ?>"><?php echo get_the_title(); ?></a>
+                    </h3>
+                    <span class="price"><?php echo $product->get_price_html(); ?></span>
+                </div>
+                <div class="add_to_cart global_btn">
+                    <?php woocommerce_template_loop_add_to_cart(); ?>
+                    <img src="<?php echo 'http://localhost/stoveshields/wp-content/uploads/2024/04/cart-shopping.svg' ?>" alt="cart-shopping" style="height:24px; width:24px;">
+                </div>
+            </div>
+<?php
+        }
+        wp_reset_postdata();
+    }
+}

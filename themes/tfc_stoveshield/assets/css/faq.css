@@ -1,0 +1,84 @@
+.section_1_faq .wrapper {
+  padding: 5rem 0rem;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.section_1_faq .wrapper > .column {
+  width: 450px;
+}
+.section_1_faq .wrapper .faq_container {
+  width: 70%;
+  gap: 5rem;
+}
+.section_1_faq .wrapper .faq_container .column {
+  width: 100%;
+}
+
+.section_1_faq .container_1760 > h2 {
+  font-size: 3rem;
+  padding: 3rem 0;
+}
+
+.section_1_faq .wrapper > .column ul {
+  gap: 1.5rem;
+  position: sticky;
+  top: 10rem;
+}
+.section_1_faq .wrapper > .column ul li {
+  position: relative;
+}
+.section_1_faq .wrapper > .column ul li::before {
+  content: url("");
+  margin-right: 0.5rem;
+}
+.section_1_faq .wrapper > .column ul li a {
+  color: #000000;
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+.section_1_faq .wrapper > .column ul li.faq-link-open::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='9' viewBox='0 0 8 9'%3E%3Cpath fill='%23EB001B' d='M3.99456 8.864C3.22656 8.864 2.53856 8.688 1.93056 8.336C1.33856 7.968 0.874563 7.48 0.538563 6.872C0.202563 6.264 0.0345626 5.6 0.0345626 4.88C0.0345626 4.16 0.202563 3.504 0.538563 2.912C0.874563 2.304 1.33856 1.824 1.93056 1.472C2.53856 1.12 3.22656 0.943999 3.99456 0.943999C4.74656 0.943999 5.41856 1.12 6.01056 1.472C6.61856 1.824 7.09056 2.304 7.42656 2.912C7.77856 3.504 7.95456 4.16 7.95456 4.88C7.95456 5.616 7.77856 6.288 7.42656 6.896C7.09056 7.488 6.61856 7.968 6.01056 8.336C5.41856 8.688 4.74656 8.864 3.99456 8.864Z'/%3E%3C/svg%3E");
+}
+.section_1_faq .wrapper > .column ul li.faq-link-open a {
+  font-size: 1.5rem;
+}
+.section_1_faq .wrapper > .column ul li.faq-link-open {
+  margin-left: 1rem;
+}
+
+.section_1_faq .wrapper .faq_container .column h2 {
+  margin-bottom: 3rem;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .section_1_faq .wrapper {
+    flex-direction: column;
+  }
+  .section_1_faq .wrapper .faq_container {
+    width: 100%;
+  }
+  .section_1_faq .container_1760 > h2 {
+    font-size: 2rem;
+    padding: 3rem 0;
+  }
+}
+@media screen and (max-width: 480px) {
+  .section_1_faq .wrapper {
+    flex-direction: column;
+    padding: 1rem 0;
+    gap: 4rem;
+  }
+  .section_1_faq .wrapper .faq_container {
+    width: 100%;
+  }
+  .section_1_faq .wrapper > .column ul li a {
+    font-size: 0.875rem;
+  }
+  .section_1_faq .wrapper li.faq-link-open a {
+    font-size: 0.95rem !important;
+  }
+  .section_1_faq .wrapper > .column {
+    width: 100%;
+  }
+}/*# sourceMappingURL=faq.css.map */

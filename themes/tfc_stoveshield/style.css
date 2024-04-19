@@ -1092,3 +1092,51 @@ footer .l_content span {
     font-size: 0.875rem;
   }
 }/*# sourceMappingURL=global.css.map */
+
+/* Header sidebar cart css */
+.tfc_header_wc_sidebar .wc-block-mini-cart__button {
+  background-color: #FFFDE6;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+/** Contact Form css */
+#wpcf7-f119-o1 .wpcf7-form{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+}
+#wpcf7-f119-o1 .wpcf7-form p{  
+  display: flex!important;
+  flex-direction: column!important;
+  align-items: center!important;
+  width: 786px;
+}
+#wpcf7-f119-o1 .wpcf7-form p span{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:1rem;
+  width: 100%;
+}
+#wpcf7-f119-o1 .wpcf7-form p  span textarea {
+  resize: none;
+}
+#wpcf7-f119-o1 .wpcf7-form .wpcf7-response-output{
+  color: white;
+  padding: .5rem 1rem;
+}
+/* contact form @media */
+@media screen and (max-width: 769px){
+  #wpcf7-f119-o1 .wpcf7-form p{ 
+    width: unset;
+  }
+  #wpcf7-f119-o1 .wpcf7-form p span{
+    width: unset!important;
+  }
+  #wpcf7-f119-o1 .wpcf7-form p  span textarea{
+    max-width: 95%;
+  }
+}
