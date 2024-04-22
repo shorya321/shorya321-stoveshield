@@ -13,19 +13,20 @@ get_header();
     $banner_title = ($banner_section['title']) ? $banner_section['title'] : '';
     $banner_sub_title = ($banner_section['sub_title']) ? $banner_section['sub_title'] : '';
     $banner_button_link = ($banner_section['button_link']) ? $banner_section['button_link'] : '';
-    $img_src = 'http://localhost/stoveshields/wp-content/uploads/2024/04/circle-play-1.svg';
+    if ($banner_section && $banner_title && $banner_image) :
     ?>
-    <section class="hero_section" style="background-image: url('<?php echo esc_url($banner_image) ?>');">
-        <div class="wrapper flex_column">
-            <span><?php echo $banner_sub_title; ?></span>
-            <h1><?php echo $banner_title ?></h1>
-            <div class="input_container"><input type="search" name="" id="" placeholder="Search your stove model number..."></div>
-            <div class="video_popup flex_row">
-                <img src="<?php echo $img_src; ?>" class="tfc_banner_vdo_img" alt="<?php echo pathinfo(basename($img_src), PATHINFO_FILENAME); ?>" />
-                <span>Need Help Locating Your Model Number?</span>
+        <section class="hero_section" style="background-image: url('<?php echo esc_url($banner_image) ?>');">
+            <div class="wrapper flex_column">
+                <span><?php echo $banner_sub_title; ?></span>
+                <h1><?php echo $banner_title ?></h1>
+                <div class="input_container"><input type="search" name="" id="" placeholder="Search your stove model number..."></div>
+                <div class="video_popup flex_row">
+                    <img src="<?php echo esc_url(home_url()) . '/wp-content/uploads/2024/04/circle-play-1.svg'; ?>" class="tfc_banner_vdo_img" alt="<?php echo tfc_getimage_filename(esc_url(home_url()) . '/wp-content/uploads/2024/04/circle-play-1.svg'); ?>" />
+                    <span>Need Help Locating Your Model Number?</span>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    <?php endif; ?>
 
     <!---------- Section-2 Home Page -------------------->
     <?php
@@ -49,8 +50,7 @@ get_header();
                             <?php foreach ($features as $feature) :
                                 if ($feature['image'] && $feature['title'] && $feature['description']) :; ?>
                                     <div class="info_box flex_column">
-                                        <?php $logo_name = pathinfo(basename($feature['image']), PATHINFO_FILENAME); ?>
-                                        <img src="<?php echo $feature['image']; ?>" alt="<?php echo $logo_name; ?>" width="69" height="69">
+                                        <img src="<?php echo $feature['image']; ?>" alt="<?php echo tfc_getimage_filename($feature['image']); ?>" width="69" height="69">
                                         <h3><?php echo $feature['title'];  ?></h3>
                                         <p><?php echo $feature['description']; ?></p>
                                     </div>
@@ -79,7 +79,7 @@ get_header();
                         <?php if (!empty($popular_brands['brands'])) : ?>
                             <div class="inner_column inner_column1 flex_row tfc_brand_images">
                                 <?php foreach ($popular_brands['brands'] as $brand) : ?>
-                                    <a href="<?php echo $brand['link']; ?>"> <img src="<?php echo $brand['image']; ?>" /> </a>
+                                    <a href="<?php echo $brand['link']; ?>"> <img src="<?php echo esc_url($brand['image']); ?>" alt="<?php echo tfc_getimage_filename(esc_url($brand['image'])); ?>" /></a>
                                 <?php endforeach; ?>
                             </div>
                         <?php
@@ -88,12 +88,10 @@ get_header();
                     <?php if (!empty($brand_button) && $brand_button['title'] && $brand_button['url']) : ?>
                         <div class="column flex_row">
                             <span>Don’t see your brand?</span>
-                            <a class="global_btn" href="<?php echo $brand_button['url']; ?>">
+                            <a class="global_btn" href="<?php echo esc_url($brand_button['url']); ?>">
                                 <div class="btn_wrapper">
                                     <span><?php echo $brand_button['title']; ?></span>
-                                    <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M4.58398 11.5H17.4173M17.4173 11.5L11.9173 6M17.4173 11.5L11.9173 17" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
+                                    <img src="<?php echo esc_url(home_url()) ?>/wp-content/uploads/2024/04/arrow-right.svg" alt="arrow-right" style="width: 23px; height: 23px; ">
                                 </div>
                             </a>
                         </div>
@@ -114,23 +112,21 @@ get_header();
             <div class="container_1500">
                 <div class="wrapper flex_column">
                     <h2><?php echo $video_section['title']; ?></h2>
-                    <img src="<?php echo $video_section['image']; ?>" alt="">
+                    <img src="<?php echo esc_url($video_section['image']); ?>" alt="<?php echo tfc_getimage_filename(esc_url($video_section['image'])); ?>">
                 </div>
             </div>
         </section>
     <?php endif; ?>
 
-
     <!---------- Section-5 Home Page -------------------->
     <?php
-
     $product_section = get_field('product_section');
     if ($product_section) {
         $product_section_title = $product_section['title'];
         $product_section_description = $product_section['description'];
         $product_section['products'];
     };
-    if ($product_section_title && $product_section_description && !empty($product_section)) :
+    if ($product_section_title && $product_section_description && !empty($product_section['products'])) :
     ?>
         <section class="homepage_section5">
             <div class="container_1500">
@@ -147,7 +143,7 @@ get_header();
                         ?>
                                 <div class="inner_column inner_column_1 flex_column">
                                     <div class="product_img">
-                                        <img src="<?php echo $product['product_image']; ?>" alt="">
+                                        <img src="<?php echo esc_url($product['product_image']); ?>" alt="<?php echo tfc_getimage_filename(esc_url($product['product_image'])); ?>">
                                     </div>
                                     <div class="product_description">
                                         <h2><?php echo $product['product_name']; ?></h2>
@@ -155,7 +151,7 @@ get_header();
                                             <?php foreach ($product['product_description'] as $description) :
                                                 if ($description['icon'] && $description['description']) : ?>
                                                     <li>
-                                                        <img src="<?php echo $description['icon']; ?>" alt="<?php echo pathinfo(basename($description['icon']), PATHINFO_FILENAME) ?>" width="42" height="42">
+                                                        <img src="<?php echo $description['icon']; ?>" alt="<?php echo tfc_getimage_filename(esc_url($description['icon'])); ?>" width="42" height="42">
                                                         <span><?php echo $description['description']; ?></span>
                                                     </li>
                                             <?php endif;
@@ -166,9 +162,7 @@ get_header();
                                                         <a class="global_btn" href="<?php echo $product['button']['url']; ?>">
                                                             <div class="btn_wrapper">
                                                                 <span><?php echo $product['button']['title']; ?></span>
-                                                                <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                    <path d="M4.58398 11.5H17.4173M17.4173 11.5L11.9173 6M17.4173 11.5L11.9173 17" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                                                </svg>
+                                                                <img src="<?php echo esc_url(home_url()); ?>/wp-content/uploads/2024/04/arrow-right.svg " alt="arrow-right" style="width: 22px; height: 23px;" >
                                                             </div>
                                                         </a>
                                                     <?php endif; ?>
@@ -198,7 +192,7 @@ get_header();
     ?>
         <section class="homepage_section6">
             <div class="container_1500">
-                <img src="<?php echo $video_section['image']; ?>">
+                <img src="<?php echo $video_section['image']; ?>" alt="<?php echo tfc_getimage_filename($video_section['image']); ?>" >
             </div>
         </section>
     <?php endif; ?>
@@ -220,25 +214,25 @@ get_header();
     </section>
 
     <!---------- Section-8 Home Page Popular Products-------------------->
-<?php
-// display products
-$product=get_field('product_section','option');
-$shortcode=$product['shortcode'];
-if(!empty($product['title']) && !empty($product['shortcode'])):
-?>
-    <section class="homepage_section8 best_sellers">
-        <div class="container_1760">
-            <div class="wrapper flex_column">
-                <div class="column flex_row">
-                    <h2>Shop For Popular Stove Top Protectors For Your Stove, Range or Cooktop</h2>
-                </div>         
-                <div class="column grid_row">
-                    <?php echo do_shortcode(" $shortcode "); ?>
+    <?php
+    // display products
+    $product = get_field('product_section', 'option');
+    $shortcode = $product['shortcode'];
+    if (!empty($product['title']) && !empty($product['shortcode'])) :
+    ?>
+        <section class="homepage_section8 best_sellers">
+            <div class="container_1760">
+                <div class="wrapper flex_column">
+                    <div class="column flex_row">
+                        <h2><?php echo $product['title']; ?></h2>
+                    </div>
+                    <div class="column grid_row">
+                        <?php echo do_shortcode(" $shortcode "); ?>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-<?php endif;?>
+        </section>
+    <?php endif; ?>
 
     <!---------- Section-9 Home Page -------------------->
     <?php

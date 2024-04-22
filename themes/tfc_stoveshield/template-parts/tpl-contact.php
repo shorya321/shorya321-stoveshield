@@ -57,7 +57,7 @@ $contact_info = $contact_section['contact_info'];
 
                 </div>
             </div>
-
+            
             <div class="column flex_column">
                 <div class="inner_wrapper">
                     <h2>Write us a message</h2>
@@ -71,8 +71,12 @@ $contact_info = $contact_section['contact_info'];
                     $shortcode = ($contact_form_section['contact_page_shortcode__']) ? $contact_form_section['contact_page_shortcode__'] : '';
                     echo do_shortcode(" $shortcode ");
                     ?>
+                    <?php if ($contact_info['email']) : ?>
+                        <p>We recommend emailing us directly at <a href="mailto:<?php echo $contact_info['email']; ?>"><?php echo $contact_info['email']; ?></a> We look forward to hearing from you!</p>
+                    <?php endif; ?>
                 </div>
             </div>
+            
         </div>
     </section>
 </main>

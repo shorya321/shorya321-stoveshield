@@ -102,6 +102,12 @@ function tfc_stoveshield_setup()
             'flex-height' => true,
         )
     );
+
+
+    /**
+     * Add Support for woocommerce
+     */
+    add_theme_support('woocommerce');
 }
 add_action('after_setup_theme', 'tfc_stoveshield_setup');
 
@@ -134,9 +140,27 @@ function  tfc_stoveshield_scripts()
     if (is_page('our-story')) {
         wp_enqueue_style('ourstory-css', get_stylesheet_directory_uri() . '/assets/css/ourstory.css', array(), microtime());
     }
+
+    //Enequeue Login Page || Register Page 
+    if (is_page('login')) {
+        wp_enqueue_style('login-css', get_stylesheet_directory_uri() . '/assets/css/login.css');
+    }
+
+    //Enequeue Register Page Css
+    if (is_page('register')) {
+        wp_enqueue_style('register-css', get_stylesheet_directory_uri() . '/assets/css/register.css');
+    }
+
+    // Enequeue WC Single Product Page Css
+    global $product;
+    if (is_product()) {
+        wp_enqueue_style('single_product-css', get_stylesheet_directory_uri() . '/assets/css/single_product.css');
+    }
 }
 add_action('wp_enqueue_scripts', 'tfc_stoveshield_scripts');
 
+if (is_page('product')) {
+}
 
 
 /** Allow SVG uploads */
@@ -259,7 +283,7 @@ function tfc_blog_posts_function($atts)
             $output .= '<div class="column post_short_meta_desp flex_column">';
             $output .= '<h3> ' . get_the_title() . ' </h3>';
             $output .= '<div class="post_date">';
-            $output .= '<img src=" '.get_site_url().'/wp-content/uploads/2024/04/calendar-alt.svg" alt="calendar-alt" style="max-width: fit-content; width:25; height:25;"/>';
+            $output .= '<img src=" ' . get_site_url() . '/wp-content/uploads/2024/04/calendar-alt.svg" alt="calendar-alt" style="max-width: fit-content; width:25; height:25;"/>';
             $output .= '<span>' . get_the_date() . '</span>';
 
             $output .= '</div>';
@@ -309,7 +333,6 @@ function tfc_display_woocommerce_products_shortcode($atts)
     $output = ob_get_clean();
     return $output;
 }
-
 function tfc_display_woocommerce_products($post_type, $category, $posts_per_page)
 {
     $args = array(
@@ -355,11 +378,176 @@ function tfc_display_woocommerce_products($post_type, $category, $posts_per_page
                 </div>
                 <div class="add_to_cart global_btn">
                     <?php woocommerce_template_loop_add_to_cart(); ?>
-                    <img src="<?php echo 'http://localhost/stoveshields/wp-content/uploads/2024/04/cart-shopping.svg' ?>" alt="cart-shopping" style="height:24px; width:24px;">
+                    <img src="<?php echo site_url() . '/wp-content/uploads/2024/04/cart-shopping.svg' ?>" alt="cart-shopping" style="height:24px; width:24px;">
                 </div>
             </div>
-<?php
+    <?php
         }
         wp_reset_postdata();
     }
 }
+
+
+/**
+ *  Create Function For Get Image File Name
+ */
+function tfc_getimage_filename($file_url)
+{
+    if ($file_url) :
+        $filename = pathinfo(basename($file_url), PATHINFO_FILENAME);
+        return $filename;
+    else :
+        return 'image';
+    endif;
+}
+
+
+/** 
+ * Register custom shortcode for displaying registration form
+ */
+function tfc_stoveshield_registration_form_shortcode()
+{
+    if (is_user_logged_in()) {
+        return '<p>You are already registered</p>
+        <p>Go to <a href="' . esc_html(get_page_link(get_page_by_path('my-account'))) . '">My Account Page </p>';
+    }
+
+    ob_start();
+    do_action('woocommerce_before_customer_login_form'); ?>
+
+    <form method="post" class="woocommerce-form woocommerce-form-register register" <?php do_action('woocommerce_register_form_tag'); ?>>
+
+        <?php do_action('woocommerce_register_form_start'); ?>
+
+        <?php if ('no' === get_option('woocommerce_registration_generate_username')) : ?>
+
+            <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
+                <label for="reg_username"><?php esc_html_e('Username', 'woocommerce'); ?>&nbsp;<span class="required">*</span></label>
+                <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="reg_username" autocomplete="username" value="<?php echo (isset($_POST['username'])) ? esc_attr(wp_unslash($_POST['username'])) : ''; ?>" /> <!-- WPCS: XSS ok. -->
+            </p>
+
+        <?php endif; ?>
+
+        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
+            <label for="reg_email"><?php esc_html_e('Email address', 'woocommerce'); ?>&nbsp;<span class="required">*</span></label>
+            <input type="email" class="woocommerce-Input woocommerce-Input--text input-text" name="email" id="reg_email" autocomplete="email" value="<?php echo (isset($_POST['email'])) ? esc_attr(wp_unslash($_POST['email'])) : ''; ?>" /> <!-- WPCS: XSS ok. -->
+        </p>
+
+        <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
+            <label for="reg_password"><?php esc_html_e('Password', 'woocommerce'); ?>&nbsp;<span class="required">*</span></label>
+            <input type="password" class="woocommerce-Input woocommerce-Input--text input-text" name="password" id="reg_password" autocomplete="new-password" />
+        </p>
+
+        <?php do_action('woocommerce_register_form'); ?>
+
+        <p class="woocommerce-FormRow form-row">
+            <?php wp_nonce_field('woocommerce-register', 'woocommerce-register-nonce'); ?>
+            <button type="submit" class="woocommerce-Button woocommerce-button button woocommerce-form-register__submit" name="register" value="<?php esc_attr_e('Register', 'woocommerce'); ?>"><?php esc_html_e('Sign Up', 'woocommerce'); ?></button>
+        </p>
+
+        <?php do_action('woocommerce_register_form_end'); ?>
+
+    </form>
+
+<?php
+    return ob_get_clean();
+}
+add_shortcode('tfc_registration_form', 'tfc_stoveshield_registration_form_shortcode');
+
+
+/**
+ * WooCommerce Customer Login Shortcode
+ */
+add_shortcode('tfc_wc_login_form', 'tfc_stoveshield_login_form');
+function tfc_stoveshield_login_form()
+{
+    if (is_user_logged_in()) return '<p>You are already logged in</p>';
+    ob_start();
+    do_action('woocommerce_before_customer_login_form');
+    woocommerce_login_form(array('redirect' => wc_get_page_permalink('my-account')));
+    return ob_get_clean();
+}
+
+/**
+ *  Optionally Redirect Login & Registration Pages to My Account Page If Customer Is Logged In
+ */
+function tfc_stoveshield_redirect_login_registration_if_logged_in()
+{
+    if (is_page() && is_user_logged_in() && (has_shortcode(get_the_content(), 'wc_login_form_bbloomer') || has_shortcode(get_the_content(), 'wc_reg_form_bbloomer'))) {
+        wp_safe_redirect(wc_get_page_permalink('login'));
+        exit;
+    }
+}
+add_action('template_redirect', 'tfc_stoveshield_redirect_login_registration_if_logged_in');
+
+
+
+/** 
+ * Add Login and Terms and Condition Links After Registration Form
+ */
+function tfc_custom_login_links_registration_form()
+{
+    echo '<div class="tfc_registration_form_links create-account">
+    <p>
+        Already have an account ?<a href="' . esc_html(get_page_link(get_page_by_path('login'))) . '"> Log In now!</a>
+    </p>
+    <br>
+    <p>By Signing up i agree to Stove Shield <a href="#">Terms of Service</a> and <a href="' . esc_html(get_page_link(get_page_by_path('privacy-policy'))) . '"> Privacy Policy.</a></p>
+    </div>';
+};
+
+add_action('woocommerce_register_form_end', 'tfc_custom_login_links_registration_form', 10);
+
+
+
+/**
+ * Add Register Link after Login Form
+ */
+function tfc_custom_register_link_registration_form()
+{
+    echo '<div class="tfc_login_form_links create-account">
+    <p>
+        Don`t have an account?<a href=' . esc_html(get_page_link(get_page_by_path('register'))) . '>  Sign up now!</a>
+    </p>
+</div>';
+}
+add_action('woocommerce_login_form_end', 'tfc_custom_register_link_registration_form', 10);
+
+
+
+/** 
+ * Redirect User If User Is not Login for my-accout Page 
+ */
+function tfc_redirect_user_login_page()
+{
+    if (is_page('my-account') && !is_user_logged_in()) :
+        wp_safe_redirect(esc_html(get_page_link(get_page_by_path('login'))));
+    endif;
+}
+add_action('wp', 'tfc_redirect_user_login_page');
+
+
+
+/**Customization of Single Product Page */
+add_action( 'woocommerce_after_add_to_cart_button', 'tfc_single_buy_button' ); 
+function tfc_single_buy_button() {
+    // get the current post/product ID
+    $current_product_id = get_the_ID();
+
+    // get the product based on the ID
+    $product = wc_get_product( $current_product_id );
+
+    // get the "Checkout Page" URL
+    $checkout_url = WC()->cart->get_checkout_url();
+    
+    // run only on simple products
+    if( $product->is_type( 'simple' ) ) {
+        echo '<a href="'.$checkout_url.'?add-to-cart='.$current_product_id.'" class="tfc_single_add_to_cart_button button">Buy Now</a>';
+    }
+}
+
+
+
+//Show Woocommerce Single Rating Before Title 
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
+add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 3 );

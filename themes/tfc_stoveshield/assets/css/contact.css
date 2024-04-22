@@ -132,4 +132,18 @@
   .login_form .wrapper > .column:nth-of-type(2) .inner_wrapper form label {
     font-size: 0.75rem;
   }
-}/*# sourceMappingURL=contact.css.map */
+} /*# sourceMappingURL=contact.css.map */
+
+/*Contact Form Submit Button css */
+#wpcf7-f267-o1 form p input[type="submit"] {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000000;
+  background-color: #efe33b;
+  border-radius: 10px;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  padding: 1.25rem 2.5rem 1.25rem 2.5rem;
+  transition: background-color 0.2s ease-in-out;
+}

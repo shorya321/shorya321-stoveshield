@@ -69,7 +69,7 @@
                     endif;
                     ?>
                 </div>
-                <div class="column flex_column">
+                <div class="column flex_column tfc_footer_contacts">
                     <?php
                     // contact info section
                     $contact_section = get_field('contact_section', 'option');
@@ -107,7 +107,7 @@
                                     <div class="social_icons flex_row">
                                         <?php foreach ($social_links as $data) : ?>
                                             <a href="<?php echo $data['link']; ?>">
-                                                <img src="<?php echo $data['icon']; ?>">
+                                                <img src="<?php echo $data['icon']; ?>" alt="<?php echo tfc_getimage_filename($data['icon']); ?>" >
                                             </a>
                                         <?php endforeach; ?>
                                     </div>

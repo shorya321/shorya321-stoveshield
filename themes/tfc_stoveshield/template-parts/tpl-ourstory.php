@@ -2,9 +2,7 @@
 /* Template Name: Our Story Page */
 get_header();
 ?>
-
 <main>
-
     <!-- Section-1 ourstory intorduction -->
     <section class="ourstory_section1 intro">
         <div class="container_1760">
@@ -21,7 +19,7 @@ get_header();
                     $video_img = ($video['video']) ? $video['video'] : '';
                 ?>
                     <div class="column">
-                        <img src="<?php echo esc_url($video_img) ?>">
+                        <img src="<?php echo esc_url($video_img) ?>" alt="<?php echo tfc_getimage_filename($video_img); ?>">
                     </div>
                 <?php endif; ?>
             </div>
@@ -48,7 +46,7 @@ get_header();
                 <div class="wrapper flex_row">
                     <div class="column">
                         <?php if ($image) : ?>
-                            <img src="<?php echo $image; ?>" alt="image">
+                            <img src="<?php echo $image; ?>" alt="<?php echo tfc_getimage_filename($image); ?>">
                         <?php endif; ?>
                     </div>
 
@@ -73,7 +71,7 @@ get_header();
                                     <?php foreach ($features as $data) : ?>
                                         <li>
                                             <?php if ($data['image']) : ?>
-                                                <img src="<?php echo $data['image']; ?>" alt="logo" style="width:25px; height:25px;" />
+                                                <img src="<?php echo $data['image']; ?>" alt="<?php echo tfc_getimage_filename($data['image']);  ?>" style="width:25px; height:25px;" />
                                             <?php endif; ?>
                                             <?php if ($data['feature_description']) : ?>
                                                 <span><?php echo $data['feature_description']; ?></span>
@@ -85,10 +83,10 @@ get_header();
 
                             <?php if ($stove_button['url'] && $stove_button['title']) : ?>
 
-                                <a class="global_btn" href="<?php echo $stove_button['url']; ?>">
+                                <a class="global_btn" href="<?php echo esc_url($stove_button['url']); ?>">
                                     <div class="btn_wrapper">
                                         <span><?php echo $stove_button['title']; ?></span>
-                                        <img src="<?php echo get_site_url() . '/wp-content/uploads/2024/04/arrow-right.svg'; ?>" alt="arrow-right" style="width: 23px; height:23px;" >
+                                        <img src="<?php echo get_site_url() . '/wp-content/uploads/2024/04/arrow-right.svg'; ?>" alt="arrow-right" style="width: 23px; height:23px;">
                                     </div>
                                 </a>
                             <?php endif; ?>

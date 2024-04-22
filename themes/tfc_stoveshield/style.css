@@ -482,7 +482,7 @@ h4 {
   width: 100%;
 }
 .login_form .wrapper .column:nth-of-type(2) form .create-account a {
-  color: #000000;
+  color: #000000 !important;
   text-decoration: underline;
 }
 
@@ -1139,4 +1139,13 @@ footer .l_content span {
   #wpcf7-f119-o1 .wpcf7-form p  span textarea{
     max-width: 95%;
   }
+}
+
+/* minicart css */
+.wc-block-mini-cart__badge{
+  color:#fafafa!important;
+}
+
+.tfc_footer_contacts a{
+  align-items: center;
 }
