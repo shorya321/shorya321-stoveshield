@@ -411,7 +411,6 @@ function tfc_stoveshield_registration_form_shortcode()
         return '<p>You are already registered</p>
         <p>Go to <a href="' . esc_html(get_page_link(get_page_by_path('my-account'))) . '">My Account Page </p>';
     }
-
     ob_start();
     do_action('woocommerce_before_customer_login_form'); ?>
 
@@ -449,10 +448,11 @@ function tfc_stoveshield_registration_form_shortcode()
 
     </form>
 
-<?php
+    <?php
     return ob_get_clean();
 }
 add_shortcode('tfc_registration_form', 'tfc_stoveshield_registration_form_shortcode');
+
 
 
 /**
@@ -528,26 +528,113 @@ add_action('wp', 'tfc_redirect_user_login_page');
 
 
 
-/**Customization of Single Product Page */
-add_action( 'woocommerce_after_add_to_cart_button', 'tfc_single_buy_button' ); 
-function tfc_single_buy_button() {
+/** 
+ * Customization of Single Product Page
+ */
+add_action('woocommerce_single_product_summary', 'tfc_single_product_buynow_button', 11);
+function tfc_single_product_buynow_button()
+{
     // get the current post/product ID
     $current_product_id = get_the_ID();
 
     // get the product based on the ID
-    $product = wc_get_product( $current_product_id );
+    $product = wc_get_product($current_product_id);
 
-    // get the "Checkout Page" URL
-    $checkout_url = WC()->cart->get_checkout_url();
-    
     // run only on simple products
-    if( $product->is_type( 'simple' ) ) {
-        echo '<a href="'.$checkout_url.'?add-to-cart='.$current_product_id.'" class="tfc_single_add_to_cart_button button">Buy Now</a>';
+    if ($product->is_type('simple')) {
+        echo '<a href="' . wc_get_checkout_url() . '?add-to-cart=' . $current_product_id . '" class="global_btn" style="max-width:fit-content;" >Buy Now</a>';
     }
 }
 
 
 
-//Show Woocommerce Single Rating Before Title 
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
-add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 3 );
+// Display Product Model Number in Single Product
+add_action('woocommerce_single_product_summary', 'get_model_number_single_product_summary', 15);
+function get_model_number_single_product_summary()
+{
+    $model_number_name = get_field('model_number_name', get_the_ID());
+    if (!empty($model_number_name)) : ?>
+        <div class="product_meta flex_row">
+            <span>Model number:</span>
+            <div class="number">
+                <?php echo $model_number_name; ?>
+            </div>
+        </div>
+        <?php endif;
+}
+
+
+/**
+ * Display Product Description Single Product Summary
+ */
+add_action('woocommerce_single_product_summary', 'display_product_description_single_product_summary', 16);
+function display_product_description_single_product_summary()
+{
+    $categories = get_the_terms(get_the_ID(), 'product_cat');
+    // echo "<pre>";
+
+    // You want to check if there's an object with slug 'decal-protectors'
+    $found = false;
+    foreach ($categories as $term) :
+        if ($term->slug === 'decal-protectors') {
+            $found = true;
+            break; // Stop the loop if you found the term
+        }
+    endforeach;
+
+    $product_specification = get_field('product_specification', 'options');
+    if ($found) :
+        if ($product_specification['decal_panel_protector']) :
+        ?>
+            <div class="product_short_description">
+                <ul class="flex_column">
+                    <?php foreach ($product_specification['decal_panel_protector'] as $data) : ?>
+                        <li>
+                            <img src="<?php echo esc_url(home_url())?>/wp-content/uploads/2024/04/yellow_tick.svg" alt="yellow_tick" style="width: 25px; height:25px;" > 
+                            <?php echo $data['specification'];?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+<?php
+        endif;
+    else :
+        if ($product_specification['stove_top_protector']) :
+            ?>
+                <div class="product_short_description">
+                    <ul class="flex_column">
+                        <?php foreach ($product_specification['stove_top_protector'] as $data) : ?>
+                            <li>
+                                <img src="<?php echo esc_url(home_url())?>/wp-content/uploads/2024/04/yellow_tick.svg" alt="yellow_tick" style="width: 25px; height:25px;" > 
+                                <?php echo $data['specification'];?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+        <?php
+            endif;
+    endif;
+}
+
+// Remove Product Meta Category From Single Product Page
+remove_action('woocommerce_single_product_summary','woocommerce_template_single_meta',40);
+
+// Show Woocommerce Single Rating Before Title 
+remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10);
+add_action('woocommerce_single_product_summary', 'woocommerce_template_single_rating', 3);
+
+
+// Remove Single Product Data Tabs
+remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10);
+
+
+// Remove Single Product woocommerce_upsell_display
+remove_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15);
+
+
+// Remove Related Product 
+remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
+
+
+/** Shop Page Title */
+remove_action('woocommerce_shop_loop_header', 'woocommerce_product_taxonomy_archive_header');
